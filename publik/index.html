@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Blind Spot Detection System</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div class="container">
+        <div class="connection-status" id="connectionStatus">
+            Connecting...
+        </div>
+
+        <div class="header">
+            <h1>🚗 Sistem Deteksi Area Blind Spot</h1>
+            <p>Real-time monitoring menggunakan YOLOv11n dan sensor ultrasonik jsn-sr04t</p>
+        </div>
+
+        <div class="main-content">
+            <div class="camera-section">
+                <h3>📹 Camera Feed & Object Detection</h3>
+                <div class="camera-container">
+                    <img id="cameraStream" class="camera-stream" alt="Camera Stream Loading..." />
+                    <canvas id="detectionOverlay" class="detection-overlay"></canvas>
+                </div>
+
+                <div class="detection-info">
+                    <h4>Detection Status</h4>
+                    <div class="detection-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="detectionCount">0</div>
+                            <div class="stat-label">Objects Detected</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="fps">0</div>
+                            <div class="stat-label">FPS</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-primary" id="startBtn">Start Detection</button>
+                    <button class="btn btn-danger" id="stopBtn" style="display: none;">Stop Detection</button>
+                </div>
+            </div>
+
+            <div class="status-section">
+                <div class="status-card">
+                    <h3>
+                        <span class="status-indicator" id="sensorIndicator"></span>
+                        📏 Distance Sensor
+                    </h3>
+                    <div class="distance-display" id="distanceDisplay">
+                        <div class="loading">Loading...</div>
+                    </div>
+                </div>
+
+                <div class="status-card">
+                    <h3>
+                        <span class="status-indicator" id="ledIndicator"></span>
+                        💡 LED Status
+                    </h3>
+                <div class="led-status-container">
+                    <div id="ledIcon">💡</div>
+                    <div id="ledStatus">Unknown</div>
+                </div>
+                </div>
+
+                <div class="status-card">
+                    <h3>
+                        <span class="status-indicator" id="cameraIndicator"></span>
+                        📷 Camera Status
+                    </h3>
+                <div class="camera-status-container">
+                    <div id="cameraIcon">📷</div>
+                    <div id="cameraStatus">Unknown</div>
+                </div>
+                    <p><strong>Resolution:</strong> 480x320</p>
+                    <p><strong>Stream URL:</strong> <span id="streamUrl">Loading...</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- TensorFlow.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tensorflow/4.10.0/tf.min.js"></script>
+
+    <script src="script.js"></script>
+</body>
+</html>
