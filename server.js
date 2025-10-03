@@ -6,13 +6,7 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
+// Server akan dibuat secara otomatis oleh Vercel atau oleh http.listen
 
 // --- Configuration ---
 const CONFIG = {
@@ -24,6 +18,14 @@ const CONFIG = {
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Buat server HTTP dan instance Socket.IO
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*", // Sesuaikan untuk produksi jika perlu
+  }
+});
 
 // MQTT Configuration
 const MQTT_BROKER = 'mqtt://test.mosquitto.org';
@@ -224,7 +226,7 @@ app.use((err, req, res, next) => {
 // It will not run when imported by Vercel's build process.
 if (require.main === module) {
   const PORT = process.env.PORT || 3000;
-  server.listen(PORT, () => {
+  server.listen(PORT, () => { // Gunakan server yang sudah terintegrasi dengan Socket.IO
     console.log(`🚀 Blind Spot Detection Server running on http://localhost:${PORT}`);
     console.log(`📊 System Dashboard: http://localhost:${PORT}`);
     console.log(`📡 MQTT Broker: ${MQTT_BROKER}`);
@@ -249,4 +251,4 @@ process.on('SIGINT', () => {
 });
 
 // Export the Express app for Vercel
-module.exports = app;
+module.exports = server; // Ekspor server HTTP, bukan hanya app Express
