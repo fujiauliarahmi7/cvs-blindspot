@@ -10,9 +10,7 @@ const CONFIG = {
 let socket;
 let model;
 let isDetecting = false;
-let detectionCount = 0;
 let lastFrameTime = 0;
-let fps = 0;
 let systemData = {
     distance: null,
     ledStatus: 'OFF',
@@ -38,8 +36,6 @@ const elements = {
     cameraStatus: document.getElementById('cameraStatus'),
     cameraIndicator: document.getElementById('cameraIndicator'),
     cameraIcon: document.getElementById('cameraIcon'),
-    detectionCount: document.getElementById('detectionCount'),
-    fps: document.getElementById('fps'),
     streamUrl: document.getElementById('streamUrl')
 };
 
@@ -218,9 +214,6 @@ function stopDetection() {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    detectionCount = 0;
-    elements.detectionCount.textContent = '0';
-
     // small debug log of tensors
     if (window.tf) {
         console.log('TF memory after stop:', tf.memory());
@@ -232,20 +225,13 @@ async function detectObjects() {
     if (!isDetecting) return;
 
     try {
-        // Calculate FPS
-        const currentTime = performance.now();
-        if (lastFrameTime > 0) {
-            fps = Math.round(1000 / (currentTime - lastFrameTime));
-            elements.fps.textContent = fps;
-        }
-        lastFrameTime = currentTime;
+        // Calculate FPS - removed as per user request
 
         if (model) {
             // Real YOLO detection
             await performRealDetection();
         } else {
-            // Simulation mode
-            performSimulationDetection();
+            // Simulation mode detection removed as per user request
         }
 
         // Log tensor count occasionally for debugging (every ~60 frames)
@@ -300,8 +286,7 @@ async function performRealDetection() {
         const detections = processYOLOOutput(predictionsData);
         drawDetections(detections);
 
-        detectionCount = detections.length;
-        elements.detectionCount.textContent = detectionCount;
+        // detectionCount and UI update removed as per user request
 
     } finally {
         // Dispose everything created
@@ -315,38 +300,6 @@ async function performRealDetection() {
             console.log('TF memory (post-inference):', tf.memory());
         }
     }
-}
-
-// Simulation detection (when model is not available)
-function performSimulationDetection() {
-    const canvas = elements.detectionOverlay;
-    const ctx = canvas.getContext('2d');
-
-    // Clear previous detections
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Simulate random detections based on distance sensor
-    const distance = systemData.distance;
-    if (distance && distance < 450) {
-        // Simulate object detection when sensor detects something
-        const simDetections = [
-            {
-                class: 'Mobil',
-                confidence: 0.85,
-                x: canvas.width * 0.3,
-                y: canvas.height * 0.4,
-                width: canvas.width * 0.4,
-                height: canvas.height * 0.3
-            }
-        ];
-
-        drawDetections(simDetections);
-        detectionCount = simDetections.length;
-    } else {
-        detectionCount = 0;
-    }
-
-    elements.detectionCount.textContent = detectionCount;
 }
 
 // Draw detection bounding boxes
