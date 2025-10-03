@@ -220,30 +220,33 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`🚀 Blind Spot Detection Server running on http://localhost:${PORT}`);
-  console.log(`📊 System Dashboard: http://localhost:${PORT}`);
-  console.log(`📡 MQTT Broker: ${MQTT_BROKER}`);
-  console.log('📋 Topics:');
-  Object.entries(MQTT_TOPICS).forEach(([key, topic]) => {
-    console.log(`   ${key}: ${topic}`);
+// This block will only run if the script is executed directly (e.g., `node server.js`)
+// It will not run when imported by Vercel's build process.
+if (require.main === module) {
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, () => {
+    console.log(`🚀 Blind Spot Detection Server running on http://localhost:${PORT}`);
+    console.log(`📊 System Dashboard: http://localhost:${PORT}`);
+    console.log(`📡 MQTT Broker: ${MQTT_BROKER}`);
+    console.log('📋 Topics:');
+    Object.entries(MQTT_TOPICS).forEach(([key, topic]) => {
+      console.log(`   ${key}: ${topic}`);
+    });
   });
-});
+}
 
 // Graceful shutdown
 process.on('SIGINT', () => {
   console.log('\n🛑 Shutting down gracefully...');
 
-  if (mqttClient.connected) {
-    mqttClient.end();
-  }
-
-  server.close(() => {
-    console.log('✅ Server closed');
-    process.exit(0);
-  });
+  mqttClient.end(true, () => {
+    console.log('✅ MQTT client disconnected');
+    server.close(() => {
+      console.log('✅ Server closed');
+      process.exit(0);
+    });
+  })
 });
 
-module.exports = { app, server, io, mqttClient };
+// Export the Express app for Vercel
+module.exports = app;
