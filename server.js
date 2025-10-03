@@ -16,7 +16,7 @@ const io = socketIo(server, {
 
 // --- Configuration ---
 const CONFIG = {
-  CAMERA_IP: '10.246.144.3', // ESP32-CAM IP Address
+  CAMERA_IP: '10.146.168.3', // ESP32-CAM IP Address
   CAMERA_PORT: '80',
 };
 
