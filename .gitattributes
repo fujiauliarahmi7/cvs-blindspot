@@ -1,0 +1,10 @@
+# Atur perilaku default untuk semua file teks
+* text=auto eol=lf
+
+# Paksa file-file ini untuk selalu menggunakan LF (Line Feed)
+*.js    text eol=lf
+*.json  text eol=lf
+*.html  text eol=lf
+*.css   text eol=lf
+*.md    text eol=lf
+.gitignore text eol=lf
